@@ -13,15 +13,15 @@ def run_discord_bot():
     async def on_ready():
         await client.send_start_prompt()
         await client.tree.sync()
-        logger.info(f'{client.user} is now running!')
+        logger.info(f'{client.user} уже работает!')
 
-    @client.tree.command(name="chat", description="Have a chat with ChatGPT")
+    @client.tree.command(name="chat", description="Пообщайтесь с ChatGPT")
     async def chat(interaction: discord.Interaction, *, message: str):
         if client.is_replying_all == "True":
             await interaction.response.defer(ephemeral=False)
             await interaction.followup.send(
-                "> **WARN: You already on replyAll mode. If you want to use the Slash Command, switch to normal mode by using `/replyall` again**")
-            logger.warning("\x1b[31mYou already on replyAll mode, can't use slash command!\x1b[0m")
+                "> **ПРЕДУПРЕЖДЕНИЕ: Вы уже находитесь в режиме replyAll. Если вы хотите использовать команду Slash, переключитесь в обычный режим, снова используя `/replyall`**")
+            logger.warning("\x1b[31mВы уже в режиме replyAll, не можете использовать команду slash!\x1b[0m")
             return
         if interaction.user == client.user:
             return
@@ -32,55 +32,55 @@ def run_discord_bot():
         await client.send_message(interaction, message)
 
 
-    @client.tree.command(name="private", description="Toggle private access")
+    @client.tree.command(name="private", description="Переключить частный доступ")
     async def private(interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=False)
         if not client.isPrivate:
             client.isPrivate = not client.isPrivate
-            logger.warning("\x1b[31mSwitch to private mode\x1b[0m")
+            logger.warning("\x1b[31mПереключение в частный режим\x1b[0m")
             await interaction.followup.send(
-                "> **INFO: Next, the response will be sent via private reply. If you want to switch back to public mode, use `/public`**")
+                "> **ИНФОРМАЦИЯ: Далее ответ будет отправлен через приватный ответ. Если вы хотите переключиться обратно в публичный режим, используйте `/public`**")
         else:
-            logger.info("You already on private mode!")
+            logger.info("Вы уже в приватном режиме!")
             await interaction.followup.send(
-                "> **WARN: You already on private mode. If you want to switch to public mode, use `/public`**")
+                "> **ПРЕДУПРЕЖДЕНИЕ: Вы уже находитесь в частном режиме. Если вы хотите перейти в публичный режим, используйте `/public`**")
 
-    @client.tree.command(name="public", description="Toggle public access")
+    @client.tree.command(name="public", description="Переключить общественный доступ")
     async def public(interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=False)
         if client.isPrivate:
             client.isPrivate = not client.isPrivate
             await interaction.followup.send(
-                "> **INFO: Next, the response will be sent to the channel directly. If you want to switch back to private mode, use `/private`**")
-            logger.warning("\x1b[31mSwitch to public mode\x1b[0m")
+                "> **INFO: Далее ответ будет отправлен непосредственно на канал. Если вы хотите переключиться обратно в приватный режим, используйте `/private`**")
+            logger.warning("\x1b[31mПереключитесь на публичный режим\x1b[0m")
         else:
             await interaction.followup.send(
-                "> **WARN: You already on public mode. If you want to switch to private mode, use `/private`**")
-            logger.info("You already on public mode!")
+                "> **ПРЕДУПРЕЖДЕНИЕ: Вы уже находитесь в публичном режиме. Если вы хотите перейти в приватный режим, используйте `/private`**")
+            logger.info("Вы уже в публичном режиме!")
 
 
-    @client.tree.command(name="replyall", description="Toggle replyAll access")
+    @client.tree.command(name="replyall", description="Переключить replyAll режим")
     async def replyall(interaction: discord.Interaction):
         client.replying_all_discord_channel_id = str(interaction.channel_id)
         await interaction.response.defer(ephemeral=False)
         if client.is_replying_all == "True":
             client.is_replying_all = "False"
             await interaction.followup.send(
-                "> **INFO: Next, the bot will response to the Slash Command. If you want to switch back to replyAll mode, use `/replyAll` again**")
-            logger.warning("\x1b[31mSwitch to normal mode\x1b[0m")
+                "> **ИНФОРМАЦИЯ: Далее бот будет отвечать на команду Slash. Если вы хотите переключиться обратно в режим replyAll, используйте `/replyAll` снова**")
+            logger.warning("\x1b[31mПереключение в нормальный режим\x1b[0m")
         elif client.is_replying_all == "False":
             client.is_replying_all = "True"
             await interaction.followup.send(
-                "> **INFO: Next, the bot will disable Slash Command and responding to all message in this channel only. If you want to switch back to normal mode, use `/replyAll` again**")
-            logger.warning("\x1b[31mSwitch to replyAll mode\x1b[0m")
+                "> **ИНФОРМАЦИЯ: Далее бот отключит Slash Command и будет отвечать на все сообщения только в этом канале. Если вы хотите переключиться в обычный режим, используйте `/replyAll` снова**")
+            logger.warning("\x1b[31mПереключение в режим replyAll\x1b[0m")
 
 
-    @client.tree.command(name="chat-model", description="Switch different chat model")
+    @client.tree.command(name="chat-model", description="Переключение различных моделей чата")
     @app_commands.choices(choices=[
-        app_commands.Choice(name="Official GPT-3.5", value="OFFICIAL"),
-        app_commands.Choice(name="Ofiicial GPT-4.0", value="OFFICIAL-GPT4"),
-        app_commands.Choice(name="Website ChatGPT-3.5", value="UNOFFICIAL"),
-        app_commands.Choice(name="Website ChatGPT-4.0", value="UNOFFICIAL-GPT4"),
+        app_commands.Choice(name="Official GPT-3.5", value="ОФИЦИАЛЬНЫЙ"),
+        app_commands.Choice(name="Ofiicial GPT-4.0", value="ОФИЦИАЛЬНЫЙ-GPT4"),
+        app_commands.Choice(name="Website ChatGPT-3.5", value="НЕОФИЦИАЛЬНЫЙ"),
+        app_commands.Choice(name="Website ChatGPT-4.0", value="НЕОФИЦИАЛЬНЫЙ-GPT4"),
         app_commands.Choice(name="Bard", value="Bard"),
     ])
 
@@ -108,18 +108,18 @@ def run_discord_bot():
                 raise ValueError("Invalid choice")
 
             client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(f"> **INFO: You are now in {client.chat_model} model.**\n")
-            logger.warning(f"\x1b[31mSwitch to {client.chat_model} model\x1b[0m")
+            await interaction.followup.send(f"> **ИНФОРМАЦИЯ: Вы сейчас находитесь в {client.chat_model} модель.**\n")
+            logger.warning(f"\x1b[31mПереключиться на {client.chat_model} модель\x1b[0m")
 
         except Exception as e:
             client.chat_model = original_chat_model
             client.openAI_gpt_engine = original_openAI_gpt_engine
             client.chatbot = client.get_chatbot_model()
-            await interaction.followup.send(f"> **ERROR: Error while switching to the {choices.value} model, check that you've filled in the related fields in `.env`.**\n")
+            await interaction.followup.send(f"> **ERROR: Ошибка при переключении на {choices.value} модель, проверьте, заполнили ли вы соответствующие поля в разделе `.env`.**\n")
             logger.exception(f"Error while switching to the {choices.value} model: {e}")
 
 
-    @client.tree.command(name="reset", description="Complete reset conversation history")
+    @client.tree.command(name="reset", description="Полный сброс истории разговоров")
     async def reset(interaction: discord.Interaction):
         if client.chat_model == "OFFICIAL":
             client.chatbot = client.get_chatbot_model()
@@ -130,43 +130,41 @@ def run_discord_bot():
             client.chatbot = client.get_chatbot_model()
             await client.send_start_prompt()
         await interaction.response.defer(ephemeral=False)
-        await interaction.followup.send("> **INFO: I have forgotten everything.**")
+        await interaction.followup.send("> **ИНФОРМАЦИЯ: Я все забыл.**")
         personas.current_persona = "standard"
         logger.warning(
-            "\x1b[31mChatGPT bot has been successfully reset\x1b[0m")
+            "\x1b[31mБот ChatGPT был успешно перезагружен\x1b[0m")
 
-    @client.tree.command(name="help", description="Show help for the bot")
+    @client.tree.command(name="help", description="Показать помощь для бота")
     async def help(interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=False)
-        await interaction.followup.send(""":star: **BASIC COMMANDS** \n
-        - `/chat [message]` Chat with ChatGPT!
-        - `/draw [prompt]` Generate an image with the Dalle2 model
-        - `/switchpersona [persona]` Switch between optional ChatGPT jailbreaks
-                `random`: Picks a random persona
-                `chatgpt`: Standard ChatGPT mode
-                `dan`: Dan Mode 11.0, infamous Do Anything Now Mode
-                `sda`: Superior DAN has even more freedom in DAN Mode
-                `confidant`: Evil Confidant, evil trusted confidant
-                `based`: BasedGPT v2, sexy GPT
-                `oppo`: OPPO says exact opposite of what ChatGPT would say
-                `dev`: Developer Mode, v2 Developer mode enabled
+        await interaction.followup.send(""":star: **ОСНОВНЫЕ КОМАНДЫ** \n
+        - `/chat [message]` Общайтесь с ChatGPT!
+        - `/draw [prompt]` Создайте изображение с помощью модели Dalle2
+        - `/switchpersona [persona]` Переключение между опциональными персонами ChatGPT
+                `random`: Выбирает случайную персону
+                `chatgpt`: Стандартный режим ChatGPT
+                `dan`: Dan Mode 11.0, позорный режим Do Anything Now Mode
+                `sda`: Superior DAN имеет еще больше свободы в режиме DAN Mode
+                `confidant`: Адвокат дьявола, злая личность.
+                `based`: BasedGPT v2, сексуальный GPT
+                `oppo`: OPPO говорит прямо противоположное тому, что сказал бы ChatGPT
+                `dev`: Режим разработчика, включен режим разработчика v2
 
-        - `/private` ChatGPT switch to private mode
-        - `/public` ChatGPT switch to public mode
-        - `/replyall` ChatGPT switch between replyAll mode and default mode
-        - `/reset` Clear ChatGPT conversation history
-        - `/chat-model` Switch different chat model
-                `OFFICIAL`: GPT-3.5 model
-                `UNOFFICIAL`: Website ChatGPT
-                `Bard`: Google Bard model
-
-For complete documentation, please visit:
-https://github.com/Zero6992/chatGPT-discord-bot""")
+        - `/private` ChatGPT переключается в приватный режим
+        - `/public` ChatGPT переключается в публичный режим
+        - `/replyall` ChatGPT переключается между режимом replyAll и режимом по умолчанию
+        - `/reset` Очистка истории разговоров ChatGPT
+        - `/chat-model` Переключение различных моделей чата
+                `OFFICIAL`: модель GPT-3.5
+                `UNOFFICIAL`: Веб-сайт ChatGPT
+                `Bard`: модель Google Bard
+""")
 
         logger.info(
-            "\x1b[31mSomeone needs help!\x1b[0m")
+            "\x1b[31mКому-то нужна помощь!\x1b[0m")
 
-    @client.tree.command(name="draw", description="Generate an image with the Dalle2 model")
+    @client.tree.command(name="draw", description="Создание изображения с помощью модели Dalle2")
     async def draw(interaction: discord.Interaction, *, prompt: str):
         if interaction.user == client.user:
             return
@@ -189,17 +187,17 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
 
         except openai.InvalidRequestError:
             await interaction.followup.send(
-                "> **ERROR: Inappropriate request 😿**")
+                "> **ОШИБКА: Неуместный запрос 😿**")
             logger.info(
-            f"\x1b[31m{username}\x1b[0m made an inappropriate request.!")
+            f"\x1b[31m{username}\x1b[0m обратился с неуместной просьбой.!")
 
         except Exception as e:
             await interaction.followup.send(
-                "> **ERROR: Something went wrong 😿**")
-            logger.exception(f"Error while generating image: {e}")
+                "> **ОШИБКА: Что-то пошло не так 😿**")
+            logger.exception(f"Ошибка при генерации изображения: {e}")
 
 
-    @client.tree.command(name="switchpersona", description="Switch between optional chatGPT jailbreaks")
+    @client.tree.command(name="switchpersona", description="Переключение между дополнительными персонами chatGPT")
     @app_commands.choices(persona=[
         app_commands.Choice(name="Random", value="random"),
         app_commands.Choice(name="Standard", value="standard"),
@@ -227,7 +225,7 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
         persona = persona.value
 
         if persona == personas.current_persona:
-            await interaction.followup.send(f"> **WARN: Already set to `{persona}` persona**")
+            await interaction.followup.send(f"> **ПРЕДУПРЕЖДЕНИЕ: Уже установлено `{persona}` персона**")
 
         elif persona == "standard":
             if client.chat_model == "OFFICIAL":
@@ -239,7 +237,7 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
 
             personas.current_persona = "standard"
             await interaction.followup.send(
-                f"> **INFO: Switched to `{persona}` persona**")
+                f"> **ИНФОРМАЦИЯ: Переключился на `{persona}` персона**")
 
         elif persona == "random":
             choices = list(personas.PERSONAS.keys())
@@ -248,7 +246,7 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
             personas.current_persona = chosen_persona
             await responses.switch_persona(chosen_persona, client)
             await interaction.followup.send(
-                f"> **INFO: Switched to `{chosen_persona}` persona**")
+                f"> **ИНФОРМАЦИЯ: Переключился на `{chosen_persona}` персона**")
 
 
         elif persona in personas.PERSONAS:
@@ -259,14 +257,14 @@ https://github.com/Zero6992/chatGPT-discord-bot""")
                 f"> **INFO: Switched to `{persona}` persona**")
             except Exception as e:
                 await interaction.followup.send(
-                    "> **ERROR: Something went wrong, please try again later! 😿**")
-                logger.exception(f"Error while switching persona: {e}")
+                    "> **ERROR: Что-то пошло не так, пожалуйста, повторите попытку позже! 😿**")
+                logger.exception(f"Ошибка при переключении персоны: {e}")
 
         else:
             await interaction.followup.send(
-                f"> **ERROR: No available persona: `{persona}` 😿**")
+                f"> **ОШИБКА: Нет доступных персон: `{persona}` 😿**")
             logger.info(
-                f'{username} requested an unavailable persona: `{persona}`')
+                f'{username} запросил недоступную персону: `{persona}`')
 
     @client.event
     async def on_message(message):
